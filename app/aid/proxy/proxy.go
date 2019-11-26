@@ -3,7 +3,6 @@ package proxy
 import (
 	"io/ioutil"
 	"log"
-	"net/http"
 	"net/url"
 	"os"
 	"regexp"
@@ -13,7 +12,6 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/henrylee2cn/pholcus/app/downloader/request"
 	"github.com/henrylee2cn/pholcus/app/downloader/surfer"
 	"github.com/henrylee2cn/pholcus/common/ping"
 	"github.com/henrylee2cn/pholcus/config"
@@ -101,6 +99,7 @@ func (self *Proxy) findOnline() *Proxy {
 		self.threadPool <- true
 		go func(proxy string) {
 			alive, _, _ := ping.Ping(self.allIps[proxy], CONN_TIMEOUT)
+			alive = true
 			self.Lock()
 			self.all[proxy] = alive
 			self.Unlock()
@@ -225,21 +224,22 @@ func (self *Proxy) testAndSort(key string, testHost string) (*ProxyForHost, bool
 
 // 测试代理ip可用性
 func (self *Proxy) findUsable(proxy string, testHost string) (alive bool, timedelay time.Duration) {
-	t0 := time.Now()
-	req := &request.Request{
-		Url:         testHost,
-		Method:      "HEAD",
-		Header:      make(http.Header),
-		DialTimeout: time.Second * time.Duration(DAIL_TIMEOUT),
-		ConnTimeout: time.Second * time.Duration(CONN_TIMEOUT),
-		TryTimes:    TRY_TIMES,
-	}
-	req.SetProxy(proxy)
-	resp, err := self.surf.Download(req)
-
-	if resp.StatusCode != http.StatusOK {
-		return false, 0
-	}
-
-	return err == nil, time.Since(t0)
+	return true,0
+	//t0 := time.Now()
+	//req := &request.Request{
+	//	Url:         testHost,
+	//	Method:      "HEAD",
+	//	Header:      make(http.Header),
+	//	DialTimeout: time.Second * time.Duration(DAIL_TIMEOUT),
+	//	ConnTimeout: time.Second * time.Duration(CONN_TIMEOUT),
+	//	TryTimes:    TRY_TIMES,
+	//}
+	//req.SetProxy(proxy)
+	//resp, err := self.surf.Download(req)
+	//
+	//if resp.StatusCode != http.StatusOK {
+	//	return false, 0
+	//}
+	//
+	//return err == nil, time.Since(t0)
 }
