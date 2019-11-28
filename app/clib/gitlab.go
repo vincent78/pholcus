@@ -64,7 +64,7 @@ var Gitlab = &Spider{
 					tmp.WriteString("&")
 					tmp.WriteString("user[login]=spiderTest&user[password]=spider1234&user[remember_me]=1")
 					postData := url.QueryEscape(tmp.String())
-					postData = "utf8=%E2%9C%93&" + postData
+					//postData = "utf8=%E2%9C%93&" + postData
 					req := &request.Request{
 						Url:          "http://git.80021.xyz:39980/users/sign_in",
 						Rule:         "用户登陆",
@@ -72,7 +72,10 @@ var Gitlab = &Spider{
 						EnableCookie: true,
 						PostData:     postData,
 					}
+					req.Header.Add("Origin", "http://git.80021.xyz:39980")
+					req.Header.Add("Upgrade-Insecure-Requests", "1")
 					ctx.AddQueue(req)
+					ctx.FileOutput("temp.xx.html")
 				},
 			},
 			"用户登陆": {
