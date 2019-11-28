@@ -16,9 +16,9 @@ func TestParseHtml(t *testing.T) {
 	doc, _ := goquery.NewDocumentFromReader(file)
 	doc.Find("#ip_list tr").Each(func(i int, tr *goquery.Selection) {
 		if i > 0 {
+			println("No. ", i)
 			tr.Find("td").Each(func(j int, td *goquery.Selection) {
 				println("index:", j, "\ttd:", strings.TrimSpace(td.Text()))
-
 			})
 		}
 	})
